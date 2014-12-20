@@ -37,11 +37,21 @@ merge_data <- function()
     #if(!(names(test_data) == names(train_data)))
     #    stop
     
+    # Join all
     set <- rbind(test_data, train_data)
     
+    # Get activities names
     activity_name <- read.table("activity_labels.txt")
     
-    set[["activity"]] <- activity_name[ match(set[['activity']], activity_name[[1]] ) , 2]
+    # Change activity keys by name
+    set[["activity"]] <- activity_name[ match(set[['activity']], activity_name[[1]] ) , 2]  
     
-    set
+    # Make independent tidy data set with the average of each variable for each activity and each subject
+    set_mean <- aggregate( set, by = list(set$subject, set$activity), FUN=mean )
+    set_mean[["subject"]] <- NULL
+    set_mean[["activity"]] <- NULL
+    colnames(set_mean)[1] <- "subject"
+    colnames(set_mean)[2] <- "activity"
+    
+    set_mean
 }
